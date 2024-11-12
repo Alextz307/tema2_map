@@ -38,6 +38,11 @@ public class BirthdayCakeService {
 
     public void updateCake(BirthdayCake<Integer> cake) {
         cakeValidator.validate(cake);
+        
+        if (repository.findById(cake.getId()).isEmpty()) {
+            throw new IllegalArgumentException("Cake with ID " + cake.getId() + " does not exist.");
+        }
+
         repository.modify(cake);
     }
 
