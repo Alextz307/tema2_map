@@ -5,7 +5,6 @@ import main.repository.file.FileRepository;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class BinaryFileRepository<ID, T extends Identifiable<ID>> extends FileRepository<ID, T> {
