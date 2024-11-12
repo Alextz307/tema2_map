@@ -6,15 +6,13 @@ import main.service.BirthdayCakeService;
 import java.util.Scanner;
 import java.util.function.Function;
 
-public class CakeManagementUI<ID> {
-    private final BirthdayCakeService<ID> cakeService;
+public class CakeManagementUI {
+    private final BirthdayCakeService cakeService;
     private final Scanner scanner;
-    private final Function<String, ID> idConverter;
 
-    public CakeManagementUI(BirthdayCakeService<ID> cakeService, Function<String, ID> idConverter) {
+    public CakeManagementUI(BirthdayCakeService cakeService) {
         this.cakeService = cakeService;
         this.scanner = new Scanner(System.in);
-        this.idConverter = idConverter;
     }
 
     public void manageCakes() {
@@ -83,8 +81,7 @@ public class CakeManagementUI<ID> {
 
     private void updateCake() {
         System.out.print("Enter Cake ID to update: ");
-        String idInput = scanner.nextLine();
-        ID id = idConverter.apply(idInput);
+        Integer id = Integer.parseInt(scanner.nextLine());
         System.out.print("Enter New Cake Name: ");
         String name = scanner.nextLine();
         System.out.print("Enter New Cake Flavor: ");
@@ -104,8 +101,7 @@ public class CakeManagementUI<ID> {
 
     private void deleteCake() {
         System.out.print("Enter Cake ID to delete: ");
-        String idInput = scanner.nextLine();
-        ID id = idConverter.apply(idInput);
+        Integer id = Integer.parseInt(scanner.nextLine());
 
         try {
             cakeService.deleteCake(id);

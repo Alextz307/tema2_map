@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderTextFileRepositoryTest {
     private static final String FILENAME = "test_orders.txt";
-    private OrderTextFileRepository<Integer> repository;
+    private OrderTextFileRepository repository;
 
     @BeforeEach
     public void setUp() {
-        repository = new OrderTextFileRepository<>(FILENAME);
+        repository = new OrderTextFileRepository(FILENAME);
     }
 
     @AfterEach

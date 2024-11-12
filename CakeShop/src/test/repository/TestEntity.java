@@ -4,21 +4,26 @@ import main.domain.Identifiable;
 
 import java.io.Serializable;
 
-public class TestEntity implements Identifiable<Long>, Serializable {
-    private Long id;
-    private String name;
+public class TestEntity implements Identifiable<Integer>, Serializable {
+    private Integer id;
+    private final String name;
+
+    public TestEntity(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public TestEntity(String name) {
         this.name = name;
     }
 
     @Override
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -8,20 +8,24 @@ import main.repository.IRepository;
 import main.repository.memory.InMemoryFilteredRepository;
 import main.validators.OrderValidator;
 
+import java.util.List;
 import java.util.Optional;
 
-public class OrderService<ID> {
-    private final IRepository<ID, Order<ID>> orderRepository;
-    private final IRepository<ID, BirthdayCake<ID>> cakeRepository;
-    private final OrderValidator<ID> orderValidator;
+public class OrderService {
+    private final IRepository<Integer, Order<Integer>> orderRepository;
+    private final IRepository<Integer, BirthdayCake<Integer>> cakeRepository;
+    private final OrderValidator<Integer> orderValidator;
+    private Integer currentOrderId;
 
-    public OrderService(IRepository<ID, Order<ID>> orderRepository, IRepository<ID, BirthdayCake<ID>> cakeRepository) {
+    public OrderService(IRepository<Integer, Order<Integer>> orderRepository, IRepository<Integer, BirthdayCake<Integer>> cakeRepository) {
         this.orderRepository = orderRepository;
+        this.currentOrderId = ((List<Order<Integer>>)orderRepository.findAll()).size() + 1;
+
         this.cakeRepository = cakeRepository;
         this.orderValidator = new OrderValidator<>();
     }
 
-    public ID placeOrder(ID cakeId, String customerName, int quantity) {
+    public Integer placeOrder(Integer cakeId, String customerName, int quantity) {
         if (cakeRepository.findById(cakeId).isEmpty()) {
             throw new IllegalArgumentException("Cake with ID " + cakeId + " does not exist.");
         }
@@ -30,44 +34,46 @@ public class OrderService<ID> {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
 
-        Order<ID> order = new Order<>(cakeId, customerName, quantity);
-        orderValidator.validate(order);  // Validate the order before adding
-        return orderRepository.add(order);
+        Order<Integer> order = new Order<>(cakeId, customerName, quantity);
+        orderValidator.validate(order);
+        order.setId(currentOrderId++);
+        orderRepository.add(order);
+        return order.getId();
     }
 
-    public Iterable<Order<ID>> getAllOrders() {
+    public Iterable<Order<Integer>> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public Optional<Order<ID>> getOrderById(ID id) {
+    public Optional<Order<Integer>> getOrderById(Integer id) {
         return orderRepository.findById(id);
     }
 
-    public void cancelOrder(ID orderId) {
-        Optional<Order<ID>> orderOpt = orderRepository.findById(orderId);
+    public void cancelOrder(Integer orderId) {
+        Optional<Order<Integer>> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isEmpty()) {
             throw new IllegalArgumentException("Order with ID " + orderId + " does not exist.");
         }
 
-        Order<ID> order = orderOpt.get();
+        Order<Integer> order = orderOpt.get();
         order.setStatus(Order.CANCELLED);
         orderValidator.validate(order);
         orderRepository.modify(order);
     }
 
-    public void finishOrder(ID orderId) {
-        Optional<Order<ID>> orderOpt = orderRepository.findById(orderId);
+    public void finishOrder(Integer orderId) {
+        Optional<Order<Integer>> orderOpt = orderRepository.findById(orderId);
         if (orderOpt.isEmpty()) {
             throw new IllegalArgumentException("Order with ID " + orderId + " does not exist.");
         }
 
-        Order<ID> order = orderOpt.get();
+        Order<Integer> order = orderOpt.get();
         order.setStatus(Order.FINISHED);
         orderValidator.validate(order);
         orderRepository.modify(order);
     }
 
-    public void deleteOrder(ID orderId) {
+    public void deleteOrder(Integer orderId) {
         if (orderRepository.findById(orderId).isEmpty()) {
             throw new IllegalArgumentException("Order with ID " + orderId + " does not exist.");
         }
@@ -75,20 +81,20 @@ public class OrderService<ID> {
         orderRepository.delete(orderId);
     }
 
-    public Iterable<Order<ID>> filterByQuantity(int minQuantity, int maxQuantity) {
+    public Iterable<Order<Integer>> filterByQuantity(int minQuantity, int maxQuantity) {
         validateQuantityRange(minQuantity, maxQuantity);
 
-        FilterOrderByQuantity<ID> quantityFilter = new FilterOrderByQuantity<>(minQuantity, maxQuantity);
-        InMemoryFilteredRepository<ID, Order<ID>> filteredRepository =
+        FilterOrderByQuantity<Integer> quantityFilter = new FilterOrderByQuantity<>(minQuantity, maxQuantity);
+        InMemoryFilteredRepository<Integer, Order<Integer>> filteredRepository =
                 new InMemoryFilteredRepository<>(orderRepository, quantityFilter);
 
         return filteredRepository.findAll();
     }
 
-    public Iterable<Order<ID>> filterByStatus(String desiredStatus) {
-        FilterOrderByStatus<ID> statusFilter = new FilterOrderByStatus<>(desiredStatus);
+    public Iterable<Order<Integer>> filterByStatus(String desiredStatus) {
+        FilterOrderByStatus<Integer> statusFilter = new FilterOrderByStatus<>(desiredStatus);
 
-        InMemoryFilteredRepository<ID, Order<ID>> filteredRepository =
+        InMemoryFilteredRepository<Integer, Order<Integer>> filteredRepository =
                 new InMemoryFilteredRepository<>(orderRepository, statusFilter);
 
         return filteredRepository.findAll();

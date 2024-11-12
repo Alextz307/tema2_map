@@ -10,15 +10,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class InMemoryRepository<ID, T extends Identifiable<ID>> implements IRepository<ID, T> {
     private final HashMap<ID, T> items = new HashMap<>();
-    private final AtomicLong currentId = new AtomicLong(1);
 
     @Override
     public ID add(T item) {
-        Long id = currentId.getAndIncrement();
-        item.setId((ID) id);
         items.put(item.getId(), item);
-
-        return (ID) id;
+        return item.getId();
     }
 
     @Override

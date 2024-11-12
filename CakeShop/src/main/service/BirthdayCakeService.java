@@ -7,36 +7,41 @@ import main.repository.IRepository;
 import main.repository.memory.InMemoryFilteredRepository;
 import main.validators.CakeValidator;
 
+import java.util.List;
 import java.util.Optional;
 
-public class BirthdayCakeService<ID> {
-    private final IRepository<ID, BirthdayCake<ID>> repository;
-    private final CakeValidator<ID> cakeValidator;
+public class BirthdayCakeService {
+    private final IRepository<Integer, BirthdayCake<Integer>> repository;
+    private final CakeValidator<Integer> cakeValidator;
+    private Integer currentCakeId;
 
-    public BirthdayCakeService(IRepository<ID, BirthdayCake<ID>> repository) {
+    public BirthdayCakeService(IRepository<Integer, BirthdayCake<Integer>> repository) {
         this.repository = repository;
+        this.currentCakeId = ((List<BirthdayCake<Integer>>)repository.findAll()).size() + 1;
         this.cakeValidator = new CakeValidator<>();
     }
 
-    public ID addCake(BirthdayCake<ID> cake) {
+    public Integer addCake(BirthdayCake<Integer> cake) {
         cakeValidator.validate(cake);
-        return repository.add(cake);
+        cake.setId(currentCakeId++);
+        repository.add(cake);
+        return cake.getId();
     }
 
-    public Iterable<BirthdayCake<ID>> getAllCakes() {
+    public Iterable<BirthdayCake<Integer>> getAllCakes() {
         return repository.findAll();
     }
 
-    public Optional<BirthdayCake<ID>> getCakeById(ID id) {
+    public Optional<BirthdayCake<Integer>> getCakeById(Integer id) {
         return repository.findById(id);
     }
 
-    public void updateCake(BirthdayCake<ID> cake) {
+    public void updateCake(BirthdayCake<Integer> cake) {
         cakeValidator.validate(cake);
         repository.modify(cake);
     }
 
-    public void deleteCake(ID id) {
+    public void deleteCake(Integer id) {
         if (repository.findById(id).isEmpty()) {
             throw new IllegalArgumentException("Cake with ID " + id + " does not exist.");
         }
@@ -44,19 +49,19 @@ public class BirthdayCakeService<ID> {
         repository.delete(id);
     }
 
-    public Iterable<BirthdayCake<ID>> filterByFlavor(String desiredFlavor) {
-        FilterBirthdayCakeByFlavor<ID> flavorFilter = new FilterBirthdayCakeByFlavor<>(desiredFlavor);
-        InMemoryFilteredRepository<ID, BirthdayCake<ID>> filteredRepository =
+    public Iterable<BirthdayCake<Integer>> filterByFlavor(String desiredFlavor) {
+        FilterBirthdayCakeByFlavor<Integer> flavorFilter = new FilterBirthdayCakeByFlavor<>(desiredFlavor);
+        InMemoryFilteredRepository<Integer, BirthdayCake<Integer>> filteredRepository =
                 new InMemoryFilteredRepository<>(repository, flavorFilter);
 
         return filteredRepository.findAll();
     }
 
-    public Iterable<BirthdayCake<ID>> filterByPriceRange(double minPrice, double maxPrice) {
+    public Iterable<BirthdayCake<Integer>> filterByPriceRange(double minPrice, double maxPrice) {
         validatePriceRange(minPrice, maxPrice);
 
-        FilterBirthdayCakeByPriceRange<ID> priceFilter = new FilterBirthdayCakeByPriceRange<>(minPrice, maxPrice);
-        InMemoryFilteredRepository<ID, BirthdayCake<ID>> filteredRepository =
+        FilterBirthdayCakeByPriceRange<Integer> priceFilter = new FilterBirthdayCakeByPriceRange<>(minPrice, maxPrice);
+        InMemoryFilteredRepository<Integer, BirthdayCake<Integer>> filteredRepository =
                 new InMemoryFilteredRepository<>(repository, priceFilter);
 
         return filteredRepository.findAll();

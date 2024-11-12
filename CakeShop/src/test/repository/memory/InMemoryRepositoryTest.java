@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryRepositoryTest {
 
-    private InMemoryRepository<Long, TestEntity> repository;
+    private InMemoryRepository<Integer, TestEntity> repository;
 
     @BeforeEach
     void setUp() {
@@ -21,19 +21,19 @@ public class InMemoryRepositoryTest {
 
     @Test
     void testAdd() {
-        TestEntity entity = new TestEntity("Test Entity");
-        Long id = repository.add(entity);
+        TestEntity entity = new TestEntity(1, "Test Entity");
+        Integer id = repository.add(entity);
 
         assertNotNull(id);
-        assertEquals(1L, id);
+        assertEquals(1, id);
         assertTrue(repository.findById(id).isPresent());
         assertEquals("Test Entity", repository.findById(id).get().getName());
     }
 
     @Test
     void testFindAll() {
-        TestEntity entity1 = new TestEntity("Entity 1");
-        TestEntity entity2 = new TestEntity("Entity 2");
+        TestEntity entity1 = new TestEntity(1, "Entity 1");
+        TestEntity entity2 = new TestEntity(2, "Entity 2");
 
         repository.add(entity1);
         repository.add(entity2);
@@ -47,8 +47,8 @@ public class InMemoryRepositoryTest {
 
     @Test
     void testFindById() {
-        TestEntity entity = new TestEntity("Test Entity");
-        Long id = repository.add(entity);
+        TestEntity entity = new TestEntity(1, "Test Entity");
+        Integer id = repository.add(entity);
 
         Optional<TestEntity> foundEntity = repository.findById(id);
         assertTrue(foundEntity.isPresent());
@@ -57,10 +57,10 @@ public class InMemoryRepositoryTest {
 
     @Test
     void testModify() {
-        TestEntity entity = new TestEntity("Original Name");
-        Long id = repository.add(entity);
+        TestEntity entity = new TestEntity(1, "Original Name");
+        Integer id = repository.add(entity);
 
-        TestEntity updatedEntity = new TestEntity("Updated Name");
+        TestEntity updatedEntity = new TestEntity(1, "Updated Name");
         updatedEntity.setId(id);
         repository.modify(updatedEntity);
 
@@ -71,8 +71,8 @@ public class InMemoryRepositoryTest {
 
     @Test
     void testDelete() {
-        TestEntity entity = new TestEntity("Test Entity");
-        Long id = repository.add(entity);
+        TestEntity entity = new TestEntity(1, "Test Entity");
+        Integer id = repository.add(entity);
 
         repository.delete(id);
 

@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BirthdayCakeTextFileRepositoryTest {
     private static final String FILENAME = "test_cakes.txt";
-    private BirthdayCakeTextFileRepository<Integer> repository;
+    private BirthdayCakeTextFileRepository repository;
 
     @BeforeEach
     public void setUp() {
-        repository = new BirthdayCakeTextFileRepository<>(FILENAME);
+        repository = new BirthdayCakeTextFileRepository(FILENAME);
     }
 
     @AfterEach

@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryFilteredRepositoryTest {
 
-    private InMemoryRepository<Long, TestEntity> baseRepository;
-    private InMemoryFilteredRepository<Long, TestEntity> filteredRepository;
+    private InMemoryRepository<Integer, TestEntity> baseRepository;
+    private InMemoryFilteredRepository<Integer, TestEntity> filteredRepository;
 
     @BeforeEach
     void setUp() {
@@ -24,8 +24,8 @@ public class InMemoryFilteredRepositoryTest {
 
     @Test
     void testFindAllWithFilter() {
-        TestEntity entity1 = new TestEntity("Accepted Name");
-        TestEntity entity2 = new TestEntity("Rejected Name");
+        TestEntity entity1 = new TestEntity(1, "Accepted Name");
+        TestEntity entity2 = new TestEntity(2, "Rejected Name");
 
         baseRepository.add(entity1);
         baseRepository.add(entity2);

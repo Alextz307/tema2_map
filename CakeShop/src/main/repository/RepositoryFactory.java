@@ -12,19 +12,19 @@ import main.repository.memory.InMemoryBirthdayCakeRepository;
 import main.repository.memory.InMemoryOrderRepository;
 
 public class RepositoryFactory {
-    public static IRepository<Long, BirthdayCake<Long>> createCakeRepository(String repositoryType, String fileNameOrUrl) {
+    public static IRepository<Integer, BirthdayCake<Integer>> createCakeRepository(String repositoryType, String fileNameOrUrl) {
         return switch (repositoryType.toLowerCase()) {
             case "binary" -> new BirthdayCakeBinaryFileRepository<>(fileNameOrUrl);
-            case "text" -> new BirthdayCakeTextFileRepository<>(fileNameOrUrl);
+            case "text" -> new BirthdayCakeTextFileRepository(fileNameOrUrl);
             case "database" -> new BirthdayCakeDbRepository(fileNameOrUrl);
             default -> new InMemoryBirthdayCakeRepository();
         };
     }
 
-    public static IRepository<Long, Order<Long>> createOrderRepository(String repositoryType, String fileNameOrUrl) {
+    public static IRepository<Integer, Order<Integer>> createOrderRepository(String repositoryType, String fileNameOrUrl) {
         return switch (repositoryType.toLowerCase()) {
             case "binary" -> new OrderBinaryFileRepository<>(fileNameOrUrl);
-            case "text" -> new OrderTextFileRepository<>(fileNameOrUrl);
+            case "text" -> new OrderTextFileRepository(fileNameOrUrl);
             case "database" -> new OrderDbRepository(fileNameOrUrl);
             default -> new InMemoryOrderRepository();
         };

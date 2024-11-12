@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BinaryFileRepositoryTest {
     private static final String FILENAME = "test_binary_file.bin";
-    private BinaryFileRepository<Long, TestEntity> repository;
+    private BinaryFileRepository<Integer, TestEntity> repository;
 
     @BeforeEach
     public void setUp() {
@@ -31,7 +31,7 @@ public class BinaryFileRepositoryTest {
     @Test
     public void testAdd() {
         TestEntity entity = new TestEntity("Test Name");
-        entity.setId(1L);
+        entity.setId(1);
 
         repository = new BinaryFileRepository<>(FILENAME);
         repository.add(entity);

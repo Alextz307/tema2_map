@@ -6,14 +6,14 @@ import main.service.OrderService;
 import java.util.Scanner;
 import java.util.function.Function;
 
-public class CakeShopUI<ID> {
-    private final CakeManagementUI<ID> cakeManagementUI;
-    private final OrderManagementUI<ID> orderManagementUI;
+public class CakeShopUI {
+    private final CakeManagementUI cakeManagementUI;
+    private final OrderManagementUI orderManagementUI;
     private final Scanner scanner;
 
-    public CakeShopUI(BirthdayCakeService<ID> cakeService, OrderService<ID> orderService, Function<String, ID> idConverter) {
-        this.cakeManagementUI = new CakeManagementUI<>(cakeService, idConverter);
-        this.orderManagementUI = new OrderManagementUI<>(orderService, idConverter);
+    public CakeShopUI(BirthdayCakeService cakeService, OrderService orderService) {
+        this.cakeManagementUI = new CakeManagementUI(cakeService);
+        this.orderManagementUI = new OrderManagementUI(orderService);
         this.scanner = new Scanner(System.in);
     }
 

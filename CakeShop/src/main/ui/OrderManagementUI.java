@@ -5,15 +5,13 @@ import main.service.OrderService;
 import java.util.Scanner;
 import java.util.function.Function;
 
-public class OrderManagementUI<ID> {
-    private final OrderService<ID> orderService;
+public class OrderManagementUI {
+    private final OrderService orderService;
     private final Scanner scanner;
-    private final Function<String, ID> idConverter;
 
-    public OrderManagementUI(OrderService<ID> orderService, Function<String, ID> idConverter) {
+    public OrderManagementUI(OrderService orderService) {
         this.orderService = orderService;
         this.scanner = new Scanner(System.in);
-        this.idConverter = idConverter;
     }
 
     public void manageOrders() {
@@ -64,8 +62,7 @@ public class OrderManagementUI<ID> {
 
     private void placeOrder() {
         System.out.print("Enter Cake ID: ");
-        String cakeIdInput = scanner.nextLine();
-        ID cakeId = idConverter.apply(cakeIdInput);
+        Integer cakeId = Integer.parseInt(scanner.nextLine());
         System.out.print("Enter Customer Name: ");
         String customerName = scanner.nextLine();
         System.out.print("Enter Quantity: ");
@@ -85,8 +82,7 @@ public class OrderManagementUI<ID> {
 
     private void cancelOrder() {
         System.out.print("Enter Order ID to cancel: ");
-        String orderIdInput = scanner.nextLine();
-        ID orderId = idConverter.apply(orderIdInput);
+        Integer orderId = Integer.parseInt(scanner.nextLine());
 
         try {
             orderService.cancelOrder(orderId);
@@ -98,8 +94,7 @@ public class OrderManagementUI<ID> {
 
     private void finishOrder() {
         System.out.print("Enter Order ID to finish: ");
-        String orderIdInput = scanner.nextLine();
-        ID orderId = idConverter.apply(orderIdInput);
+        Integer orderId = Integer.parseInt(scanner.nextLine());
 
         try {
             orderService.finishOrder(orderId);
@@ -111,8 +106,7 @@ public class OrderManagementUI<ID> {
 
     private void deleteOrder() {
         System.out.print("Enter Order ID to delete: ");
-        String orderIdInput = scanner.nextLine();
-        ID orderId = idConverter.apply(orderIdInput);
+        Integer orderId = Integer.parseInt(scanner.nextLine());
 
         try {
             orderService.deleteOrder(orderId);

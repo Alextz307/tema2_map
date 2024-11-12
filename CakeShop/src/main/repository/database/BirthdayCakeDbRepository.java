@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<Long>> {
+public class BirthdayCakeDbRepository implements IRepository<Integer, BirthdayCake<Integer>> {
     private final String url;
 
     public BirthdayCakeDbRepository(String url) {
@@ -16,7 +16,7 @@ public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<
     }
 
     @Override
-    public Long add(BirthdayCake<Long> cake) {
+    public Integer add(BirthdayCake<Integer> cake) {
         String sql = "INSERT INTO BirthdayCake (name, flavor, price, layers) VALUES (?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -29,27 +29,28 @@ public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                long id = rs.getLong(1);
+                Integer id = rs.getInt(1);
                 cake.setId(id);
                 return id;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
     @Override
-    public Iterable<BirthdayCake<Long>> findAll() {
-        List<BirthdayCake<Long>> cakes = new ArrayList<>();
+    public Iterable<BirthdayCake<Integer>> findAll() {
+        List<BirthdayCake<Integer>> cakes = new ArrayList<>();
         String sql = "SELECT * FROM BirthdayCake";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                BirthdayCake<Long> cake = new BirthdayCake<>(
-                        rs.getLong("id"),
+                BirthdayCake<Integer> cake = new BirthdayCake<>(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("flavor"),
                         rs.getDouble("price"),
@@ -64,7 +65,7 @@ public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<
     }
 
     @Override
-    public Optional<BirthdayCake<Long>> findById(Long id) {
+    public Optional<BirthdayCake<Integer>> findById(Integer id) {
         String sql = "SELECT * FROM BirthdayCake WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -72,8 +73,8 @@ public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                BirthdayCake<Long> cake = new BirthdayCake<>(
-                        rs.getLong("id"),
+                BirthdayCake<Integer> cake = new BirthdayCake<>(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("flavor"),
                         rs.getDouble("price"),
@@ -88,7 +89,7 @@ public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<
     }
 
     @Override
-    public void modify(BirthdayCake<Long> updatedCake) {
+    public void modify(BirthdayCake<Integer> updatedCake) {
         String sql = "UPDATE BirthdayCake SET name = ?, flavor = ?, price = ?, layers = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -106,7 +107,7 @@ public class BirthdayCakeDbRepository implements IRepository<Long, BirthdayCake<
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Integer id) {
         String sql = "DELETE FROM BirthdayCake WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -2,17 +2,17 @@ package main.repository.file.text;
 
 import main.domain.BirthdayCake;
 
-public class BirthdayCakeTextFileRepository<ID> extends TextFileRepository<ID, BirthdayCake<ID>> {
+public class BirthdayCakeTextFileRepository extends TextFileRepository<Integer, BirthdayCake<Integer>> {
     public BirthdayCakeTextFileRepository(String filename) {
         super(filename);
         super.readFromFile();
     }
 
     @Override
-    protected BirthdayCake<ID> parseEntity(String line) {
+    protected BirthdayCake<Integer> parseEntity(String line) {
         String[] fields = line.split(",");
 
-        ID id = (ID) Integer.valueOf(fields[0].trim());
+        Integer id = Integer.valueOf(fields[0].trim());
 
         String name = fields[1].trim();
         String flavor = fields[2].trim();
