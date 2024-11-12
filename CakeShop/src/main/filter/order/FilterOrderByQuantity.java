@@ -1,6 +1,7 @@
-package main.filter;
+package main.filter.order;
 
 import main.domain.Order;
+import main.filter.AbstractFilter;
 
 public class FilterOrderByQuantity<ID> implements AbstractFilter<Order<ID>> {
     private final int minQuantity;

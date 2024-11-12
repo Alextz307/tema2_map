@@ -1,6 +1,8 @@
 package main.domain;
 
-public class BirthdayCake<ID> implements Identifiable<ID> {
+import java.io.Serializable;
+
+public class BirthdayCake<ID> implements Identifiable<ID>, Serializable {
     private ID id;
     private final String name;
     private final String flavor;
@@ -50,6 +52,6 @@ public class BirthdayCake<ID> implements Identifiable<ID> {
 
     @Override
     public String toString() {
-        return "BirthdayCake [id=" + id + ", name=" + name + ", flavor=" + flavor + ", price=" + price + ", layers=" + layers + "]";
+        return id + "," + name + "," + flavor + "," + price + "," + layers;
     }
 }

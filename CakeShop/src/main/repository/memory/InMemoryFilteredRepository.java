@@ -1,10 +1,10 @@
-package main.repository;
+package main.repository.memory;
 
 import main.domain.Identifiable;
 import main.filter.AbstractFilter;
+import main.repository.IRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryFilteredRepository<ID, T extends Identifiable<ID>> extends InMemoryRepository<ID, T> {

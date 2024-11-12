@@ -1,6 +1,7 @@
-package main.repository;
+package main.repository.memory;
 
 import main.domain.Identifiable;
+import main.repository.IRepository;
 
 import java.util.HashMap;
 import java.util.ArrayList;

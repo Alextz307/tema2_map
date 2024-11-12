@@ -1,6 +1,7 @@
-package main.filter;
+package main.filter.cake;
 
 import main.domain.BirthdayCake;
+import main.filter.AbstractFilter;
 
 public class FilterBirthdayCakeByPriceRange<ID> implements AbstractFilter<BirthdayCake<ID>> {
     private final double minPrice;

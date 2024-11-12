@@ -2,20 +2,23 @@ package main.service;
 
 import main.domain.BirthdayCake;
 import main.domain.Order;
-import main.filter.FilterOrderByQuantity;
-import main.filter.FilterOrderByStatus;
+import main.filter.order.FilterOrderByQuantity;
+import main.filter.order.FilterOrderByStatus;
 import main.repository.IRepository;
-import main.repository.InMemoryFilteredRepository;
+import main.repository.memory.InMemoryFilteredRepository;
+import main.validators.OrderValidator;
 
 import java.util.Optional;
 
 public class OrderService<ID> {
     private final IRepository<ID, Order<ID>> orderRepository;
     private final IRepository<ID, BirthdayCake<ID>> cakeRepository;
+    private final OrderValidator<ID> orderValidator;
 
     public OrderService(IRepository<ID, Order<ID>> orderRepository, IRepository<ID, BirthdayCake<ID>> cakeRepository) {
         this.orderRepository = orderRepository;
         this.cakeRepository = cakeRepository;
+        this.orderValidator = new OrderValidator<>();
     }
 
     public ID placeOrder(ID cakeId, String customerName, int quantity) {
@@ -28,6 +31,7 @@ public class OrderService<ID> {
         }
 
         Order<ID> order = new Order<>(cakeId, customerName, quantity);
+        orderValidator.validate(order);  // Validate the order before adding
         return orderRepository.add(order);
     }
 
@@ -47,6 +51,7 @@ public class OrderService<ID> {
 
         Order<ID> order = orderOpt.get();
         order.setStatus(Order.CANCELLED);
+        orderValidator.validate(order);
         orderRepository.modify(order);
     }
 
@@ -58,6 +63,7 @@ public class OrderService<ID> {
 
         Order<ID> order = orderOpt.get();
         order.setStatus(Order.FINISHED);
+        orderValidator.validate(order);
         orderRepository.modify(order);
     }
 
@@ -70,8 +76,9 @@ public class OrderService<ID> {
     }
 
     public Iterable<Order<ID>> filterByQuantity(int minQuantity, int maxQuantity) {
-        FilterOrderByQuantity<ID> quantityFilter = new FilterOrderByQuantity<>(minQuantity, maxQuantity);
+        validateQuantityRange(minQuantity, maxQuantity);
 
+        FilterOrderByQuantity<ID> quantityFilter = new FilterOrderByQuantity<>(minQuantity, maxQuantity);
         InMemoryFilteredRepository<ID, Order<ID>> filteredRepository =
                 new InMemoryFilteredRepository<>(orderRepository, quantityFilter);
 
@@ -85,5 +92,15 @@ public class OrderService<ID> {
                 new InMemoryFilteredRepository<>(orderRepository, statusFilter);
 
         return filteredRepository.findAll();
+    }
+
+    private void validateQuantityRange(int minQuantity, int maxQuantity) {
+        if (minQuantity < 0) {
+            throw new IllegalArgumentException("Minimum quantity cannot be negative.");
+        }
+
+        if (maxQuantity < minQuantity) {
+            throw new IllegalArgumentException("Maximum quantity must be greater than or equal to minimum quantity.");
+        }
     }
 }

@@ -1,22 +1,25 @@
 package main.service;
 
 import main.domain.BirthdayCake;
-import main.filter.FilterBirthdayCakeByFlavor;
-import main.filter.FilterBirthdayCakeByPriceRange;
+import main.filter.cake.FilterBirthdayCakeByFlavor;
+import main.filter.cake.FilterBirthdayCakeByPriceRange;
 import main.repository.IRepository;
-import main.repository.InMemoryFilteredRepository;
+import main.repository.memory.InMemoryFilteredRepository;
+import main.validators.CakeValidator;
 
 import java.util.Optional;
 
 public class BirthdayCakeService<ID> {
     private final IRepository<ID, BirthdayCake<ID>> repository;
+    private final CakeValidator<ID> cakeValidator;
 
     public BirthdayCakeService(IRepository<ID, BirthdayCake<ID>> repository) {
         this.repository = repository;
+        this.cakeValidator = new CakeValidator<>();
     }
 
     public ID addCake(BirthdayCake<ID> cake) {
-        validateCake(cake);
+        cakeValidator.validate(cake);
         return repository.add(cake);
     }
 
@@ -29,7 +32,7 @@ public class BirthdayCakeService<ID> {
     }
 
     public void updateCake(BirthdayCake<ID> cake) {
-        validateCake(cake);
+        cakeValidator.validate(cake);
         repository.modify(cake);
     }
 
@@ -43,7 +46,6 @@ public class BirthdayCakeService<ID> {
 
     public Iterable<BirthdayCake<ID>> filterByFlavor(String desiredFlavor) {
         FilterBirthdayCakeByFlavor<ID> flavorFilter = new FilterBirthdayCakeByFlavor<>(desiredFlavor);
-
         InMemoryFilteredRepository<ID, BirthdayCake<ID>> filteredRepository =
                 new InMemoryFilteredRepository<>(repository, flavorFilter);
 
@@ -51,29 +53,22 @@ public class BirthdayCakeService<ID> {
     }
 
     public Iterable<BirthdayCake<ID>> filterByPriceRange(double minPrice, double maxPrice) {
-        FilterBirthdayCakeByPriceRange<ID> priceFilter = new FilterBirthdayCakeByPriceRange<>(minPrice, maxPrice);
+        validatePriceRange(minPrice, maxPrice);
 
+        FilterBirthdayCakeByPriceRange<ID> priceFilter = new FilterBirthdayCakeByPriceRange<>(minPrice, maxPrice);
         InMemoryFilteredRepository<ID, BirthdayCake<ID>> filteredRepository =
                 new InMemoryFilteredRepository<>(repository, priceFilter);
 
         return filteredRepository.findAll();
     }
 
-    private void validateCake(BirthdayCake<ID> cake) {
-        if (cake.getName() == null || cake.getName().isEmpty()) {
-            throw new IllegalArgumentException("Cake name cannot be empty.");
+    private void validatePriceRange(double minPrice, double maxPrice) {
+        if (minPrice < 0) {
+            throw new IllegalArgumentException("Minimum price cannot be negative.");
         }
 
-        if (cake.getFlavor() == null || cake.getFlavor().isEmpty()) {
-            throw new IllegalArgumentException("Cake flavor cannot be empty.");
-        }
-
-        if (cake.getPrice() <= 0) {
-            throw new IllegalArgumentException("Cake price must be positive.");
-        }
-
-        if (cake.getLayers() <= 0) {
-            throw new IllegalArgumentException("Cake must have at least 1 layer.");
+        if (maxPrice < minPrice) {
+            throw new IllegalArgumentException("Maximum price must be greater than or equal to the minimum price.");
         }
     }
 }

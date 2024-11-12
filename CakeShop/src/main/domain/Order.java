@@ -1,15 +1,16 @@
 package main.domain;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Order<ID> implements Identifiable<ID> {
+public class Order<ID> implements Identifiable<ID>, Serializable {
     private ID orderId;
     private final ID cakeId;
     private final String customerName;
     private final Integer quantity;
     private String status;
-    private final LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     public static final String PENDING = "Pending";
     public static final String FINISHED = "Finished";
@@ -52,10 +53,20 @@ public class Order<ID> implements Identifiable<ID> {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public ID getCakeId() {
+        return cakeId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
     @Override
     public String toString() {
-        return "Order [orderId=" + orderId + ", cakeId=" + cakeId + ", customerName=" + customerName +
-                ", quantity=" + quantity + ", status=" + status +
-                ", createdAt=" + createdAt.format(DATE_TIME_FORMATTER) + "]";
+        return orderId + "," + cakeId + "," + customerName + "," + quantity + "," + status + "," + createdAt.format(DATE_TIME_FORMATTER);
     }
 }
